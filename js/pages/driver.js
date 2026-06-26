@@ -10,13 +10,14 @@ export async function render(params, app) {
     const driver = await api.driver(id);
     if (!driver) { document.getElementById("driver").innerHTML = `<div class="empty">Driver not found.</div>`; return; }
 
-    // career stats (parallel)
     const [wins, seasons, titles] = await Promise.all([
-      api.driverWins(id).catch(() => []),
+      api.driverWins(id).catch(() => ({ races: [], total: 0 })),
       api.driverSeasons(id).catch(() => []),
       api.driverChampionships(id).catch(() => []),
     ]);
 
+    const winRaces = wins.races || [];
+    const winCount = wins.total || winRaces.length;
     const name = `${driver.givenName} ${driver.familyName}`;
     const span = seasons.length ? `${seasons[0].season}–${seasons[seasons.length - 1].season}` : "—";
 
@@ -24,7 +25,7 @@ export async function render(params, app) {
       <h1 class="section-title">${flag(driver.nationality)} ${esc(name)}</h1>
       <div class="stat-row">
         <div class="stat"><div class="k">World Titles</div><div class="v">${titles.length}</div></div>
-        <div class="stat"><div class="k">Race Wins</div><div class="v">${wins.length}</div></div>
+        <div class="stat"><div class="k">Race Wins</div><div class="v">${winCount}</div></div>
         <div class="stat"><div class="k">Seasons</div><div class="v">${seasons.length}</div></div>
         <div class="stat"><div class="k">Active</div><div class="v" style="font-size:20px">${span}</div></div>
       </div>
@@ -51,12 +52,12 @@ export async function render(params, app) {
         </div>
       </div>
 
-      ${wins.length ? `
-      <h2 class="section-title" style="font-size:18px;margin-top:34px">Race Wins (${wins.length})</h2>
+      ${winRaces.length ? `
+      <h2 class="section-title" style="font-size:18px;margin-top:34px">Race Wins (${winCount})</h2>
       <div class="table-wrap"><table>
         <thead><tr><th>Season</th><th>Round</th><th>Grand Prix</th><th>Team</th></tr></thead>
         <tbody>
-          ${wins.map((r) => `
+          ${winRaces.map((r) => `
             <tr onclick="location.hash='#/race/${r.season}/${r.round}'">
               <td><strong>${r.season}</strong></td>
               <td>${r.round}</td>
