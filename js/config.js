@@ -2,7 +2,7 @@
 // Global config + team livery colors (drives the dynamic theme)
 // ============================================================
 
-export const API_BASE = "https://api.jolpica.ca/ergast/f1";
+export const API_BASE = "https://api.jolpi.ca/ergast/f1";
 
 // Constructor (team) colors keyed by Ergast/Jolpica constructorId.
 // Used for accent theming, table chips, and the 3D car livery.
