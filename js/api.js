@@ -131,7 +131,7 @@ export const api = {
     const d = await get(`drivers/${driverId}/seasons?limit=100`, { ttl: 1000 * 60 * 60 * 24 });
     return d.SeasonTable?.Seasons || [];
   },
-  async driverChampionships(driverId) {
+    async driverChampionships(driverId) {
     const d = await get(`drivers/${driverId}/driverStandings/1?limit=100`, { ttl: 1000 * 60 * 60 * 24 });
     return d.StandingsTable?.StandingsLists || [];
   },

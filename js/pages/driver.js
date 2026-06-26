@@ -10,10 +10,9 @@ export async function render(params, app) {
     const driver = await api.driver(id);
     if (!driver) { document.getElementById("driver").innerHTML = `<div class="empty">Driver not found.</div>`; return; }
 
-    const [wins, seasons, titles] = await Promise.all([
+    const [wins, seasons] = await Promise.all([
       api.driverWins(id).catch(() => ({ races: [], total: 0 })),
       api.driverSeasons(id).catch(() => []),
-      api.driverChampionships(id).catch(() => []),
     ]);
 
     const winRaces = wins.races || [];
@@ -24,7 +23,7 @@ export async function render(params, app) {
     document.getElementById("driver").innerHTML = `
       <h1 class="section-title">${flag(driver.nationality)} ${esc(name)}</h1>
       <div class="stat-row">
-        <div class="stat"><div class="k">World Titles</div><div class="v">${titles.length}</div></div>
+        <div class="stat"><div class="k">World Titles</div><div class="v" id="titles-stat">…</div></div>
         <div class="stat"><div class="k">Race Wins</div><div class="v">${winCount}</div></div>
         <div class="stat"><div class="k">Seasons</div><div class="v">${seasons.length}</div></div>
         <div class="stat"><div class="k">Active</div><div class="v" style="font-size:20px">${span}</div></div>
@@ -46,9 +45,7 @@ export async function render(params, app) {
 
         <div class="card">
           <h3>Championship Seasons</h3>
-          ${titles.length ? `<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px">
-            ${titles.map((t) => `<span class="pill">🏆 ${t.season}</span>`).join("")}</div>`
-          : `<p class="muted" style="margin-top:10px">No World Championships.</p>`}
+          <div id="titles-list"><p class="muted" style="margin-top:10px">Checking each season…</p></div>
         </div>
       </div>
 
@@ -67,6 +64,17 @@ export async function render(params, app) {
         </tbody>
       </table></div>` : ""}
     `;
+
+    const titles = await api.driverChampionships(id, seasons).catch(() => []);
+    const statEl = document.getElementById("titles-stat");
+    const listEl = document.getElementById("titles-list");
+    if (statEl) statEl.textContent = titles.length;
+    if (listEl) {
+      listEl.innerHTML = titles.length
+        ? `<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px">
+            ${titles.map((y) => `<span class="pill">🏆 ${y}</span>`).join("")}</div>`
+        : `<p class="muted" style="margin-top:10px">No World Championships.</p>`;
+    }
   } catch (e) {
     document.getElementById("driver").innerHTML = errorBox(e.message);
   }
