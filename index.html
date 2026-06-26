@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ===== SEO / Social (so it shows up nicely on Google) ===== -->
+  <title>F1 ARCHIVE — Every Formula 1 Race, Driver & Record Since 1950</title>
+  <meta name="description" content="A futuristic 3D Formula 1 archive. Explore every race, every season since 1950, full championship standings, and detailed driver records — updated after every Grand Prix." />
+  <meta name="keywords" content="Formula 1, F1, F1 records, F1 standings, F1 drivers, Grand Prix results, F1 history, 1950, championship" />
+  <meta name="author" content="F1 Archive" />
+  <link rel="canonical" href="https://your-f1-archive.vercel.app/" />
+
+  <!-- Open Graph (Google / social previews) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="F1 ARCHIVE — Every F1 Race & Driver Since 1950" />
+  <meta property="og:description" content="A futuristic 3D Formula 1 archive with every race, season, standing and driver record since 1950." />
+  <meta property="og:image" content="/assets/og-cover.png" />
+
+  <meta name="theme-color" content="#0a0a0f" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>" />
+
+  <link rel="preconnect" href="https://api.jolpica.ca" />
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Three.js via import map so plain JS modules can `import ... from 'three'` -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Animated background layers -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- ===== Top navigation ===== -->
+  <header class="nav">
+    <a href="#/" class="brand">
+      <span class="brand-mark">F1</span>
+      <span class="brand-text">ARCHIVE</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#/" data-nav>Home</a>
+      <a href="#/standings" data-nav>Standings</a>
+      <a href="#/seasons" data-nav>Seasons</a>
+      <a href="#/drivers" data-nav>Drivers</a>
+    </nav>
+    <div class="nav-status" id="data-status" title="Live data status">
+      <span class="dot"></span><span id="status-text">Connecting…</span>
+    </div>
+  </header>
+
+  <!-- ===== App mounts here ===== -->
+  <main id="app" class="app"></main>
+
+  <footer class="footer">
+    <p>
+      Data: <a href="https://github.com/jolpica/jolpica-f1" target="_blank" rel="noopener">Jolpica-F1 API</a>
+      (successor to Ergast). Updated after every session. Not affiliated with Formula 1.
+    </p>
+    <p class="muted">Built with vanilla JS + Three.js · © <span id="year"></span> F1 Archive</p>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

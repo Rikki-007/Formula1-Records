@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Replace your-f1-archive.vercel.app with your real domain after deploy. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://your-f1-archive.vercel.app/</loc><priority>1.0</priority></url>
+  <url><loc>https://your-f1-archive.vercel.app/#/standings</loc><priority>0.9</priority></url>
+  <url><loc>https://your-f1-archive.vercel.app/#/seasons</loc><priority>0.8</priority></url>
+  <url><loc>https://your-f1-archive.vercel.app/#/drivers</loc><priority>0.8</priority></url>
+</urlset>
