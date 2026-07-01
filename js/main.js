@@ -4,6 +4,7 @@
 // ============================================================
 import { dispose as disposeHero } from "./hero.js";
 import { scrollTop } from "./ui.js";
+import { pageOut, pageIn } from "./motion.js";
 
 const app = document.getElementById("app");
 
@@ -26,6 +27,8 @@ async function router() {
 
   // tear down the 3D scene whenever we leave a page (home rebuilds it)
   disposeHero();
+  await pageOut(app);
+  if (token !== currentToken) return; // a newer navigation won mid-transition
 
   for (const [re, loader, names] of routes) {
     const m = hash.match(re);
@@ -42,6 +45,7 @@ async function router() {
     }
     setActiveNav(hash);
     scrollTop();
+    pageIn(app);
     return;
   }
 
@@ -51,6 +55,7 @@ async function router() {
     <p>That page doesn't exist on the grid.</p>
     <a class="btn btn-primary" href="#/" style="margin-top:18px">Back to start line →</a></div>`;
   setActiveNav("/");
+  pageIn(app);
 }
 
 function setActiveNav(hash) {

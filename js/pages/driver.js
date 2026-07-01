@@ -1,5 +1,7 @@
 import { api } from "../api.js";
 import { loader, errorBox, esc, flag } from "../ui.js";
+import { driverPhoto, initials } from "../photos.js";
+import { popIn, fadeInImage } from "../motion.js";
 
 export async function render(params, app) {
   const id = params.id;
@@ -21,7 +23,12 @@ export async function render(params, app) {
     const span = seasons.length ? `${seasons[0].season}–${seasons[seasons.length - 1].season}` : "—";
 
     document.getElementById("driver").innerHTML = `
-      <h1 class="section-title">${flag(driver.nationality)} ${esc(name)}</h1>
+      <div class="driver-hero">
+        <div class="driver-hero-photo" id="driver-photo">
+          <span class="avatar-fallback">${esc(initials(driver))}</span>
+        </div>
+        <h1 class="section-title">${flag(driver.nationality)} ${esc(name)}</h1>
+      </div>
       <div class="stat-row">
         <div class="stat"><div class="k">World Titles</div><div class="v" id="titles-stat">…</div></div>
         <div class="stat"><div class="k">Race Wins</div><div class="v">${winCount}</div></div>
@@ -64,6 +71,23 @@ export async function render(params, app) {
         </tbody>
       </table></div>` : ""}
     `;
+
+    popIn(document.getElementById("driver-photo"));
+
+    driverPhoto(driver).then((result) => {
+      const box = document.getElementById("driver-photo");
+      if (!box) return;
+      if (!result?.photo) { box.classList.add("no-photo"); return; }
+      const img = new Image();
+      img.className = "avatar-img";
+      img.alt = "";
+      img.src = result.wide || result.photo;
+      img.onload = () => {
+        box.appendChild(img);
+        box.classList.add("has-photo");
+        fadeInImage(img);
+      };
+    });
 
     const titles = await api.driverChampionships(id, seasons).catch(() => []);
     const statEl = document.getElementById("titles-stat");

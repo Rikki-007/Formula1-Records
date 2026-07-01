@@ -1,6 +1,8 @@
 import { api } from "../api.js";
 import { resetTheme } from "../theme.js";
 import { loader, errorBox, esc, flag } from "../ui.js";
+import { driverPhotosStream, initials } from "../photos.js";
+import { revealCards, fadeInImage } from "../motion.js";
 
 const PAGE = 30;
 
@@ -52,14 +54,35 @@ export async function render(params, app) {
         c.style.display = c.dataset.name.includes(q) ? "" : "none";
       });
     };
+
+    revealCards(document.querySelectorAll("#cards .card"));
+
+    driverPhotosStream(drivers, (driverId, result) => {
+      const avatar = list.querySelector(`.avatar[data-id="${CSS.escape(driverId)}"]`);
+      if (!avatar) return;
+      if (!result?.photo) { avatar.classList.add("no-photo"); return; }
+      const img = new Image();
+      img.className = "avatar-img";
+      img.alt = "";
+      img.loading = "lazy";
+      img.src = result.photo;
+      img.onload = () => {
+        avatar.appendChild(img);
+        avatar.classList.add("has-photo");
+        fadeInImage(img);
+      };
+    });
   }
 
   function cardFor(d) {
     const name = `${d.givenName} ${d.familyName}`;
-    return `<a class="card" href="#/driver/${d.driverId}" data-name="${esc(name.toLowerCase())}">
-      <h3>${flag(d.nationality)} ${esc(name)}</h3>
-      <div class="meta">${esc(d.nationality)}${d.permanentNumber ? ` · #${d.permanentNumber}` : ""}</div>
-      ${d.dateOfBirth ? `<div class="meta">Born ${esc(d.dateOfBirth)}</div>` : ""}
+    return `<a class="card driver-card" href="#/driver/${d.driverId}" data-name="${esc(name.toLowerCase())}">
+      <div class="avatar" data-id="${esc(d.driverId)}"><span class="avatar-fallback">${esc(initials(d))}</span></div>
+      <div class="driver-card-body">
+        <h3>${flag(d.nationality)} ${esc(name)}</h3>
+        <div class="meta">${esc(d.nationality)}${d.permanentNumber ? ` · #${d.permanentNumber}` : ""}</div>
+        ${d.dateOfBirth ? `<div class="meta">Born ${esc(d.dateOfBirth)}</div>` : ""}
+      </div>
     </a>`;
   }
 
